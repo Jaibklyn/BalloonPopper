@@ -2,54 +2,55 @@ using UnityEngine;
 
 public class BalloonMovement : MonoBehaviour
 {
+    // Base speed (will be scaled by difficulty)
     public float speed = 3f;
 
+    // Current direction of movement
     private Vector3 direction = Vector3.right;
     private SpriteRenderer sr;
 
+    // Left and right boundaries of the screen
     private float screenLeft, screenRight;
-
-    // Unique offset so balloons don't all bob identically
-    private float bobOffset;
 
     void Start()
     {
+        // Apply difficulty multiplier to horizontal speed
+        float speedMult = DifficultyManager.GetBalloonSpeedMultiplier();
+        speed *= speedMult;
+
         sr = GetComponent<SpriteRenderer>();
 
-        // randomize movement offset so balloons bob uniquely
-        bobOffset = Random.Range(0f, 10f);
-
         Camera cam = Camera.main;
-        if (cam == null) return;
+        if (cam == null) return; 
 
+        // Calculate the camera distance from the balloon on the z-axis
         float camDistance = Mathf.Abs(cam.transform.position.z - transform.position.z);
 
+        // Convert viewport coordinates (0 to 1) to world coordinates for screen edges
         Vector3 rightEdge = cam.ViewportToWorldPoint(new Vector3(1f, 0.5f, camDistance));
         Vector3 leftEdge = cam.ViewportToWorldPoint(new Vector3(0f, 0.5f, camDistance));
 
+        // Store x positions of left and right screen edges
         screenRight = rightEdge.x;
         screenLeft = leftEdge.x;
     }
 
     void Update()
     {
-        // Horizontal movement
+        // Move the balloon in the current direction
         transform.Translate(direction * speed * Time.deltaTime);
 
-        // Gentle bobbing
-        float verticalFloat = Mathf.Sin((Time.time + bobOffset) * 2f) * 0.5f;
-        transform.Translate(new Vector3(0f, verticalFloat * Time.deltaTime, 0f));
-
-        // Boundary checks
+        // Check if the balloon has reached the right edge of the screen
         if (transform.position.x > screenRight)
         {
-            direction = Vector3.left;
-            if (sr != null) sr.flipX = true;
+            direction = Vector3.left;       // Reverse direction to left
+            if (sr != null) sr.flipX = true; // Flip the sprite horizontally
         }
+        // Check if the balloon has reached the left edge of the screen
         else if (transform.position.x < screenLeft)
         {
-            direction = Vector3.right;
-            if (sr != null) sr.flipX = false;
+            direction = Vector3.right;      // Reverse direction to right
+            if (sr != null) sr.flipX = false; // Reset sprite flip
         }
     }
 }

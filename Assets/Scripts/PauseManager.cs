@@ -37,6 +37,6 @@ public class PauseManager : MonoBehaviour
     public void GoToTitle()
     {
         Time.timeScale = 1f;  // Reset time before switching scenes
-        SceneManager.LoadScene("Title");
+        SceneManager.LoadScene("MainMenu");
     }
 }
