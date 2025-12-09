@@ -10,12 +10,29 @@ public class PopOnContact : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
 
-        // Use the modern API to find the GameManager
         gameManager = Object.FindFirstObjectByType<GameManager>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // --- KITE / DISTRACTOR ---
+        if (other.CompareTag("Distractor"))
+        {
+            if (gameManager != null)
+            {
+                float size = other.transform.localScale.x;
+
+                // Using the same scoring formula as balloons,
+                // but pass a negative size so points become negative.
+                gameManager.AddScore(-size);
+            }
+
+            Destroy(other.gameObject); // destroy kite
+            Destroy(gameObject);       // destroy pin
+            return;
+        }
+
+        // --- BALLOON ---
         if (other.CompareTag("Balloon"))
         {
             // Play pop sound if available
@@ -24,7 +41,7 @@ public class PopOnContact : MonoBehaviour
                 audioSource.PlayOneShot(popSound);
             }
 
-            // Let the balloon handle its own pop logic
+            // Balloon handles its own pop logic
             BalloonGrowth balloon = other.GetComponent<BalloonGrowth>();
             if (balloon != null)
                 balloon.Pop();

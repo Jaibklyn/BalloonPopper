@@ -1,23 +1,16 @@
 using UnityEngine;
 
-public class BalloonMovement : MonoBehaviour
+public class KiteMovement : MonoBehaviour
 {
     public float speed = 3f;
-
     private Vector3 direction = Vector3.right;
+
     private SpriteRenderer sr;
-
     private float screenLeft, screenRight;
-
-    // Unique offset so balloons don't all bob identically
-    private float bobOffset;
 
     void Start()
     {
         sr = GetComponent<SpriteRenderer>();
-
-        // randomize movement offset so balloons bob uniquely
-        bobOffset = Random.Range(0f, 10f);
 
         Camera cam = Camera.main;
         if (cam == null) return;
@@ -25,22 +18,17 @@ public class BalloonMovement : MonoBehaviour
         float camDistance = Mathf.Abs(cam.transform.position.z - transform.position.z);
 
         Vector3 rightEdge = cam.ViewportToWorldPoint(new Vector3(1f, 0.5f, camDistance));
-        Vector3 leftEdge = cam.ViewportToWorldPoint(new Vector3(0f, 0.5f, camDistance));
+        Vector3 leftEdge  = cam.ViewportToWorldPoint(new Vector3(0f, 0.5f, camDistance));
 
         screenRight = rightEdge.x;
-        screenLeft = leftEdge.x;
+        screenLeft  = leftEdge.x;
     }
 
     void Update()
     {
-        // Horizontal movement
         transform.Translate(direction * speed * Time.deltaTime);
 
-        // Gentle bobbing
-        float verticalFloat = Mathf.Sin((Time.time + bobOffset) * 2f) * 0.5f;
-        transform.Translate(new Vector3(0f, verticalFloat * Time.deltaTime, 0f));
-
-        // Boundary checks
+        // Edge detection (same as balloon)
         if (transform.position.x > screenRight)
         {
             direction = Vector3.left;

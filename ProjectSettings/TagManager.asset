@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Balloon
+  - Distractor
   layers:
   - Default
   - TransparentFX
