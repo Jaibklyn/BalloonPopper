@@ -7,18 +7,28 @@ public class PlayerNameInput : MonoBehaviour
 
     void Start()
     {
+        // Ensure PlayerData loads saved values once per session
+        PlayerData.Load();
+
         inputField = GetComponent<TMP_InputField>();
 
-        // Load previous name if available
-        inputField.text = PlayerData.playerName;
+        // Set the text field to the saved player name
+        inputField.text = PlayerData.PlayerName;
 
-        // When text changes, save it
+        // Listen for changes and update PlayerData + PlayerPrefs
         inputField.onValueChanged.AddListener(OnNameChanged);
+    }
+
+    void OnDestroy()
+    {
+        // Clean up listener to avoid leaks when changing scenes
+        if (inputField != null)
+            inputField.onValueChanged.RemoveListener(OnNameChanged);
     }
 
     void OnNameChanged(string newName)
     {
-        PlayerData.playerName = newName;
+        PlayerData.SetPlayerName(newName);
         Debug.Log("Player name updated: " + newName);
     }
 }

@@ -11,10 +11,13 @@ public class SettingsMenu : MonoBehaviour
 
     void Start()
     {
-        // Volume Slider
+        // Make sure we load saved PlayerData once
+        PlayerData.Load();
+
+        // VOLUME SLIDER
         if (volumeSlider == null)
         {
-            // fallback: first slider
+            // Fallback: first Slider under this object
             Slider[] sliders = GetComponentsInChildren<Slider>();
             if (sliders.Length > 0)
                 volumeSlider = sliders[0];
@@ -24,14 +27,17 @@ public class SettingsMenu : MonoBehaviour
         {
             volumeSlider.minValue = 0f;
             volumeSlider.maxValue = 1f;
-            volumeSlider.value = AudioListener.volume;
+
+            // Start from saved volume
+            volumeSlider.value = PlayerData.Volume;
+
             volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
         }
 
-        // Difficulty Slider
+        // DIFFICULTY SLIDER
         if (difficultySlider == null)
         {
-            // fallback: second Slider
+            // Fallback: second Slider under this object
             Slider[] sliders = GetComponentsInChildren<Slider>();
             if (sliders.Length > 1)
                 difficultySlider = sliders[1];
@@ -43,8 +49,9 @@ public class SettingsMenu : MonoBehaviour
             difficultySlider.maxValue = 2;
             difficultySlider.wholeNumbers = true;
 
-            // Sync initial slider position with current difficulty
-            difficultySlider.value = (int)DifficultyManager.Current;
+            // Start from saved difficulty
+            difficultySlider.value = PlayerData.Difficulty;
+
             difficultySlider.onValueChanged.AddListener(OnDifficultyChanged);
         }
     }
@@ -58,17 +65,18 @@ public class SettingsMenu : MonoBehaviour
             difficultySlider.onValueChanged.RemoveListener(OnDifficultyChanged);
     }
 
-    // Called by the volume slider
     public void OnVolumeChanged(float value)
     {
-        AudioListener.volume = value;
+        // Saves to PlayerPrefs
+        PlayerData.SetVolume(value);
     }
 
-    // Called by the difficulty slider (0 = Easy, 1 = Normal, 2 = Hard)
     public void OnDifficultyChanged(float value)
     {
         int index = Mathf.RoundToInt(value);
-        DifficultyManager.SetDifficultyFromIndex(index);
+
+        // Saves to PlayerPrefs
+        PlayerData.SetDifficulty(index);
     }
 
     public void BackToMenu()
