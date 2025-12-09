@@ -5,6 +5,6 @@ public class InstructionsMenu : MonoBehaviour
 {
     public void BackToMenu()
     {
-        SceneManager.LoadScene("Title");
+        SceneManager.LoadScene("MainMenu");
     }
 }
