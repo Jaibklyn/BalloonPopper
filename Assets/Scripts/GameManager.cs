@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
         Score += points;
         UpdateScoreText();
     }
- 
+
     // Hard reset
     public static void ResetScore()
     {
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     public void RestartLevel()
     {
-        // Lab spec: if balloon gets too big, level restarts
+        // If balloon gets too big, level restarts
         Scene current = SceneManager.GetActiveScene();
         SceneManager.LoadScene(current.buildIndex);
     }
@@ -65,6 +65,29 @@ public class GameManager : MonoBehaviour
             // Go to the HighScores scene
             SceneManager.LoadScene("HighScores");
         }
+    }
+
+    //  LEVEL PROGRESSION LOGIC
+
+    // Called every time a balloon is popped
+    public void OnBalloonPopped()
+    {
+        // Tiny delay so the Destroy() on the balloon actually happens
+        Invoke(nameof(AdvanceIfNoBalloonsRemain), 0.05f);
+    }
+
+    private void AdvanceIfNoBalloonsRemain()
+    {
+        // Look for any remaining BalloonGrowth objects in the scene
+        var balloons = Object.FindObjectsByType<BalloonGrowth>(FindObjectsSortMode.None);
+
+        // If no balloons left, advance to the next level
+        if (balloons == null || balloons.Length == 0)
+        {
+            // Small delay so the final pop sound can finish before changing scenes
+            Invoke(nameof(LoadNextLevel), 0.3f);
+        }
+        // else: still balloons in this scene -> stay on this level
     }
 
     private void UpdateScoreText()
