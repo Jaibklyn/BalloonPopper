@@ -194,7 +194,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22547799291844d32800117a940069cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PopOnContact
-  popSound: {fileID: 0}
+  popSound: {fileID: 8300000, guid: e34f567566db74517b606d0c6743b0dd, type: 3}
+  volume: 1
 --- !u!82 &-744356851685250894
 AudioSource:
   m_ObjectHideFlags: 0

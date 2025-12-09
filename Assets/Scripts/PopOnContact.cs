@@ -2,29 +2,34 @@ using UnityEngine;
 
 public class PopOnContact : MonoBehaviour
 {
+    [Header("Audio")]
     public AudioClip popSound;
-    private AudioSource audioSource;
+    [Range(0f, 1f)] public float volume = 1f;
+
     private GameManager gameManager;
 
-    void Start()
+    void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
-
         gameManager = Object.FindFirstObjectByType<GameManager>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // --- KITE / DISTRACTOR ---
+        Debug.Log($"[PopOnContact] Hit: {other.name}, tag={other.tag}");
+
+        // KITE / DISTRACTOR
         if (other.CompareTag("Distractor"))
         {
             if (gameManager != null)
             {
                 float size = other.transform.localScale.x;
-
-                // Using the same scoring formula as balloons,
-                // but pass a negative size so points become negative.
+                // Negative score for kite hit (same formula, opposite sign)
                 gameManager.AddScore(-size);
+                Debug.Log($"[PopOnContact] Kite hit. Size={size}, negative score applied.");
+            }
+            else
+            {
+                Debug.LogWarning("[PopOnContact] GameManager not found for Distractor hit.");
             }
 
             Destroy(other.gameObject); // destroy kite
@@ -32,19 +37,31 @@ public class PopOnContact : MonoBehaviour
             return;
         }
 
-        // --- BALLOON ---
+        // BALLOON
         if (other.CompareTag("Balloon"))
         {
-            // Play pop sound if available
-            if (audioSource != null && popSound != null)
+            if (popSound != null)
             {
-                audioSource.PlayOneShot(popSound);
+                Debug.Log("[PopOnContact] Balloon hit. Attempting to play pop sound.");
+
+                AudioSource.PlayClipAtPoint(popSound, Vector3.zero, volume);
+            }
+            else
+            {
+                Debug.LogWarning("[PopOnContact] popSound is NOT assigned in the Inspector.");
             }
 
-            // Balloon handles its own pop logic
+            // Let the balloon handle score + destroy
             BalloonGrowth balloon = other.GetComponent<BalloonGrowth>();
             if (balloon != null)
+            {
                 balloon.Pop();
+            }
+            else
+            {
+                Debug.LogWarning("[PopOnContact] BalloonGrowth missing on Balloon. Destroying manually.");
+                Destroy(other.gameObject);
+            }
 
             // Destroy the pin
             Destroy(gameObject, 0.05f);
