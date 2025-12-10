@@ -7,6 +7,10 @@ public class GameManager : MonoBehaviour
     [Header("UI")]
     public TextMeshProUGUI scoreText;
 
+    [Header("Level")]
+    [Tooltip("Turn this ON only in the final gameplay level (e.g., Level3).")]
+    public bool isFinalLevel = false;
+
     // Global score for the current run (persists across levels)
     public static int Score { get; private set; } = 0;
 
@@ -34,7 +38,7 @@ public class GameManager : MonoBehaviour
         UpdateScoreText();
     }
 
-    // Hard reset
+    // Hard reset when starting a new run
     public static void ResetScore()
     {
         Score = 0;
@@ -42,13 +46,21 @@ public class GameManager : MonoBehaviour
 
     public void RestartLevel()
     {
-        // If balloon gets too big, level restarts
         Scene current = SceneManager.GetActiveScene();
         SceneManager.LoadScene(current.buildIndex);
     }
 
+    // Called when all balloons in a level are popped
     public void LoadNextLevel()
     {
+        // If THIS level is marked as the last gameplay level,
+        // treat it as end of run and go to High Scores.
+        if (isFinalLevel)
+        {
+            EndRunAndGoToHighScores();
+            return;
+        }
+
         int nextIndex = SceneManager.GetActiveScene().buildIndex + 1;
 
         if (nextIndex < SceneManager.sceneCountInBuildSettings)
@@ -58,18 +70,24 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // No more levels -> run finished -> save to high scores
-            PlayerData.Load(); // make sure name is loaded
-            HighScoreManager.TryAddScore(Score, PlayerData.PlayerName);
-
-            // Go to the HighScores scene
-            SceneManager.LoadScene("HighScores");
+            // Fallback: if build order changes and we hit the end anyway
+            EndRunAndGoToHighScores();
         }
     }
 
-    //  LEVEL PROGRESSION LOGIC
+    private void EndRunAndGoToHighScores()
+    {
+        Debug.Log($"[GameManager] Ending run with Score={Score}");
 
-    // Called every time a balloon is popped
+        PlayerData.Load(); // make sure name is loaded
+        HighScoreManager.TryAddScore(Score, PlayerData.PlayerName);
+
+        SceneManager.LoadScene("HighScores");
+    }
+
+    // LEVEL PROGRESSION
+
+    // Called every time a balloon is popped (from BalloonGrowth.Pop)
     public void OnBalloonPopped()
     {
         // Tiny delay so the Destroy() on the balloon actually happens

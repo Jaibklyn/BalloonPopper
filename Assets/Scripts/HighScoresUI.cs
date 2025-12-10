@@ -4,23 +4,34 @@ using TMPro;
 
 public class HighScoresUI : MonoBehaviour
 {
+    private const int MaxEntries = 5;
+    private const int EmptyScore = -1;
+
     public TextMeshProUGUI[] lines;
 
     void Start()
     {
-        HighScoreManager.Load();
+        Debug.Log($"[HighScoresUI] lines.Length = {lines?.Length ?? 0}");
 
-        var scores = HighScoreManager.Scores;
-        var names  = HighScoreManager.Names;
-
-        for (int i = 0; i < lines.Length; i++)
+        for (int i = 0; i < MaxEntries; i++)
         {
-            if (lines[i] == null) continue;
+            if (lines == null || i >= lines.Length || lines[i] == null)
+                continue;
 
-            string name = (i < names.Count)  ? names[i]  : "---";
-            int score   = (i < scores.Count) ? scores[i] : 0;
+            int score = PlayerPrefs.GetInt("HS_Score_" + i, EmptyScore);
+            string name = PlayerPrefs.GetString("HS_Name_" + i, "---");
 
-            lines[i].text = $"{i + 1}. {name} - {score}";
+            if (score < 0)
+            {
+                // empty slot
+                lines[i].text = $"{i + 1}. ---";
+            }
+            else
+            {
+                lines[i].text = $"{i + 1}. {name} - {score}";
+            }
+
+            Debug.Log($"[HighScoresUI] Slot {i}: name={name}, score={score}");
         }
     }
 

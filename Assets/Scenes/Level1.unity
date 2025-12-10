@@ -907,6 +907,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   scoreText: {fileID: 1826346789}
+  isFinalLevel: 0
 --- !u!4 &1326667731
 Transform:
   m_ObjectHideFlags: 0
@@ -1575,18 +1576,6 @@ PrefabInstance:
       value: Balloon
       objectReference: {fileID: 0}
     - target: {fileID: 8123011750384900804, guid: 771b6d2648821421f9d2aadb6a79705a, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.62
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123011750384900804, guid: 771b6d2648821421f9d2aadb6a79705a, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.62
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123011750384900804, guid: 771b6d2648821421f9d2aadb6a79705a, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.62
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123011750384900804, guid: 771b6d2648821421f9d2aadb6a79705a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.26
       objectReference: {fileID: 0}
@@ -1625,10 +1614,6 @@ PrefabInstance:
     - target: {fileID: 8123011750384900804, guid: 771b6d2648821421f9d2aadb6a79705a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9129880004265137912, guid: 771b6d2648821421f9d2aadb6a79705a, type: 3}
-      propertyPath: maxSize
-      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
