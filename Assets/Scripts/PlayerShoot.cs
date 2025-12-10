@@ -6,6 +6,13 @@ public class PlayerShoot : MonoBehaviour
     public GameObject pinPrefab; // Prefab of the pin to shoot
     public float pinSpeed = 8f;  // Speed of the pin
 
+    private Animator animator;
+
+    void Awake()
+    {
+        animator = GetComponent<Animator>();  // Get the Animator from Player
+    }
+
     void Update()
     {
         var keyboard = Keyboard.current;
@@ -20,7 +27,13 @@ public class PlayerShoot : MonoBehaviour
 
     void ShootPin()
     {
-        // Spawn the pin upright (no prefab tilt)
+        // Trigger animation
+        if (animator != null)
+        {
+            animator.SetTrigger("Shoot"); //Animation parameter "Shoot"
+        }
+
+        // Spawn the pin upright
         GameObject pin = Instantiate(pinPrefab, transform.position, Quaternion.identity);
 
         // Move it straight up
